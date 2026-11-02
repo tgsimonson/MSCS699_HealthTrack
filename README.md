@@ -28,7 +28,9 @@ All patient data in this repository is synthetic. No real protected health infor
 | API documentation (Swagger) | [`phase2-data-api/api/healthtrack-openapi.yaml`](phase2-data-api/api/healthtrack-openapi.yaml) (OpenAPI 3.1), plus an offline Swagger UI viewer: [`HealthTrack_API_Docs.html`](phase2-data-api/api/HealthTrack_API_Docs.html) |
 | Design rationale | [`phase2-data-api/docs/HealthTrack_Design_Rationale.pdf`](phase2-data-api/docs/HealthTrack_Design_Rationale.pdf) |
 
-To view the API documentation, open `HealthTrack_API_Docs.html` in a browser, or paste `healthtrack-openapi.yaml` into https://editor.swagger.io. The same viewer is in `docs/index.html` so it can be published with GitHub Pages.
+**Live API documentation (Swagger UI): https://tgsimonson.github.io/MSCS699_HealthTrack/**
+
+The same viewer works offline: open `HealthTrack_API_Docs.html` in a browser, or paste `healthtrack-openapi.yaml` into https://editor.swagger.io.
 
 ### Build the database
 
