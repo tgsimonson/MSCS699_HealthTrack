@@ -3,3 +3,8 @@
 *.xlsx binary
 *.docx binary
 *.png binary
+
+# bundled swagger ui viewers and generated spec: exclude from language stats
+docs/index.html linguist-vendored
+phase2-data-api/api/HealthTrack_API_Docs.html linguist-vendored
+phase2-data-api/api/healthtrack-openapi.json linguist-generated

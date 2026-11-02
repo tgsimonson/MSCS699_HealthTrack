@@ -1,6 +1,6 @@
 # HealthTrack: Remote Monitoring for Home-Based Cardiac Rehabilitation
 
-MSCS 699 Computer Science Capstone, University of the Cumberlands
+MSCS 699 Computer Science Capstone, University of the Cumberlands<br>
 Todd Simonson, Fall 2026, Dr. Michael Solomon
 
 HealthTrack lets patients complete cardiac rehabilitation at home while their rehab team supervises remotely. A heart rate band, blood pressure cuff, and pulse oximeter send readings to the platform. HealthTrack checks each reading against the patient's own exercise prescription, raises and escalates alerts for unsafe exertion or declining progress, and scores each patient's risk of dropping out or getting worse.
