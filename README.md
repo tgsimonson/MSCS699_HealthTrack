@@ -13,7 +13,7 @@ All patient data in this repository is synthetic. No real protected health infor
 |---|---|---|---|
 | 1. Proposal | Oct 25 | [`phase1-proposal/`](phase1-proposal/) | Proposal, requirements matrix, stakeholder analysis diagram, Gantt chart |
 | 2. Data layer and API design | Nov 1 | [`phase2-data-api/`](phase2-data-api/) | ERD, SQL schema scripts, OpenAPI (Swagger) specification, design rationale |
-| 3. Backend implementation | Nov 8 | | FastAPI and SQLAlchemy backend |
+| 3. Backend implementation | Nov 8 | [`phase3-backend/`](phase3-backend/) | SQLAlchemy models, Alembic migrations, data access layer, FastAPI endpoints with JWT auth, tests, Postman collection |
 | 4. Alert system and dashboard | Nov 15 | | Real-time alerts and Dash dashboard |
 | 5. Risk assessment | Nov 22 | | Risk scoring, prediction, and reporting |
 | 6. Performance optimization | Nov 29 | | Profiling, optimizations, benchmarks |
@@ -44,6 +44,19 @@ psql -d healthtrack -v ON_ERROR_STOP=1 -f 00_run_all.sql
 
 The last script runs 58 validation tests and prints a PASS/FAIL table. It stops with an error if any test fails.
 
-## Planned stack
+## Phase 3 at a glance
 
-PostgreSQL, FastAPI, SQLAlchemy with Alembic migrations, Dash (Plotly) with WebSockets, and scikit-learn for risk models.
+See [`phase3-backend/README.md`](phase3-backend/README.md) for setup. Quick start:
+
+```bash
+cd phase3-backend
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements-dev.txt
+python3 -m alembic upgrade head && python3 -m scripts.seed
+python3 -m uvicorn app.main:app --reload     # then open http://localhost:8000/docs
+python3 -m pytest                            # run the test suite
+```
+
+## Stack
+
+PostgreSQL or SQLite, FastAPI, SQLAlchemy 2 with Alembic migrations, Pydantic 2, Dash (Plotly) with WebSockets (Phase 4), and scikit-learn for risk models (Phase 5).

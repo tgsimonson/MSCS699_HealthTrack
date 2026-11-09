@@ -1,0 +1,2360 @@
+{
+  "info": {
+    "_postman_id": "2d0460a7-01c6-5583-81ce-6a7074ff1175",
+    "name": "HealthTrack API (Phase 3)",
+    "description": "Requests for every Phase 3 endpoint with assertions. Run the folders in order with the Collection Runner against a freshly seeded database (python -m scripts.seed). Login requests save tokens into collection variables automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const now = new Date();",
+          "pm.collectionVariables.set(\"nowIso\", now.toISOString());",
+          "pm.collectionVariables.set(\"today\", now.toISOString().slice(0, 10));",
+          "pm.collectionVariables.set(\"weekAgo\", new Date(now - 7*864e5).toISOString().slice(0, 10));",
+          "pm.collectionVariables.set(\"dayAgoIso\", new Date(now - 864e5).toISOString());",
+          "// one key prefix per collection run, so the duplicate-key test sends a true duplicate",
+          "if (pm.info.iteration === 0 && pm.info.requestName === \"Health check\") {",
+          "  pm.collectionVariables.set(\"runKey\", \"pm-\" + now.getTime()); }"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "password",
+      "value": "HealthTrack-Demo-2026!"
+    },
+    {
+      "key": "clinicianEmail",
+      "value": "marcus.lee@healthtrack.example"
+    },
+    {
+      "key": "otherClinicianEmail",
+      "value": "dana.whitfield@healthtrack.example"
+    },
+    {
+      "key": "adminEmail",
+      "value": "karen.holt@healthtrack.example"
+    },
+    {
+      "key": "itAdminEmail",
+      "value": "jordan.pike@healthtrack.example"
+    },
+    {
+      "key": "patientEmail",
+      "value": "t.reed@mail.example"
+    },
+    {
+      "key": "physicianId",
+      "value": "00000000-0000-4000-a000-000000000004"
+    },
+    {
+      "key": "clinicianId",
+      "value": "00000000-0000-4000-a000-000000000002"
+    },
+    {
+      "key": "patientId",
+      "value": "00000000-0000-4000-b000-000000000005"
+    },
+    {
+      "key": "otherPatientId",
+      "value": "00000000-0000-4000-b000-000000000001"
+    },
+    {
+      "key": "bandId",
+      "value": "00000000-0000-4000-c000-000000000051"
+    },
+    {
+      "key": "cuffId",
+      "value": "00000000-0000-4000-c000-000000000052"
+    },
+    {
+      "key": "trackerId",
+      "value": "00000000-0000-4000-c000-000000000054"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "patientToken",
+      "value": ""
+    },
+    {
+      "key": "otherClinicianToken",
+      "value": ""
+    },
+    {
+      "key": "adminToken",
+      "value": ""
+    },
+    {
+      "key": "itToken",
+      "value": ""
+    },
+    {
+      "key": "newPatientId",
+      "value": ""
+    },
+    {
+      "key": "vitalId",
+      "value": ""
+    },
+    {
+      "key": "nowIso",
+      "value": ""
+    },
+    {
+      "key": "today",
+      "value": ""
+    },
+    {
+      "key": "weekAgo",
+      "value": ""
+    },
+    {
+      "key": "dayAgoIso",
+      "value": ""
+    },
+    {
+      "key": "runKey",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0 System",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "10466533-fc89-5b84-9ef3-50c140c145d1"
+        }
+      ]
+    },
+    {
+      "name": "1 Auth",
+      "item": [
+        {
+          "name": "Log in as clinician (Marcus Lee)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "OAuth2 password grant. Saves the access token for later requests.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{clinicianEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"accessToken\", b.access_token);",
+                  "pm.test(\"token issued\", () => pm.expect(b.access_token).to.be.a(\"string\"));",
+                  "pm.collectionVariables.set(\"refreshToken\", b.refresh_token);"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "c61dbd5d-11b1-5f88-bfed-c2245b5b1b1d"
+        },
+        {
+          "name": "Log in as patient (Thomas Reed)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "OAuth2 password grant. Saves the access token for later requests.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{patientEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"patientToken\", b.access_token);",
+                  "pm.test(\"token issued\", () => pm.expect(b.access_token).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "fdb12b71-62ea-567a-a485-a6baf75053e5"
+        },
+        {
+          "name": "Log in as other clinician (Dana Whitfield)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "OAuth2 password grant. Saves the access token for later requests.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{otherClinicianEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"otherClinicianToken\", b.access_token);",
+                  "pm.test(\"token issued\", () => pm.expect(b.access_token).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "2dfda6ad-1ee4-553b-82c4-cef7408d132d"
+        },
+        {
+          "name": "Log in as admin (Karen Holt)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "OAuth2 password grant. Saves the access token for later requests.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"adminToken\", b.access_token);",
+                  "pm.test(\"token issued\", () => pm.expect(b.access_token).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "4ddc21f4-ed9a-5902-836b-2ef50c08cac6"
+        },
+        {
+          "name": "Log in as IT admin (Jordan Pike)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "OAuth2 password grant. Saves the access token for later requests.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "{{itAdminEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"itToken\", b.access_token);",
+                  "pm.test(\"token issued\", () => pm.expect(b.access_token).to.be.a(\"string\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "85002e9f-4abc-51b9-9d94-b85bb2f07c14"
+        },
+        {
+          "name": "Current user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"is clinician\", () => pm.expect(pm.response.json().role).to.eql(\"clinician\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "f6eb7d62-f91f-5d7c-9f67-310da884c82f"
+        },
+        {
+          "name": "Rotate refresh token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refreshToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "const b = pm.response.json();",
+                  "pm.collectionVariables.set(\"oldRefresh\", pm.collectionVariables.get(\"refreshToken\"));",
+                  "pm.collectionVariables.set(\"accessToken\", b.access_token);",
+                  "pm.collectionVariables.set(\"refreshToken\", b.refresh_token);"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "b877cb67-5e56-58db-8d9b-bffffd90756d"
+        },
+        {
+          "name": "Wrong password is 401",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "token"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{clinicianEmail}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "wrong-password",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "691b6f93-59e7-55cd-b204-8ce40cfa54bb"
+        },
+        {
+          "name": "No token is 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "09b39c6e-f32a-54f9-a4bb-65fd141504a2"
+        }
+      ]
+    },
+    {
+      "name": "2 Patients",
+      "item": [
+        {
+          "name": "List my patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients?page_size=50",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients"
+              ],
+              "query": [
+                {
+                  "key": "page_size",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"scoped to care team\", () => {",
+                  "  const names = pm.response.json().items.map(p => p.last_name);",
+                  "  pm.expect(names).to.include(\"Reed\"); pm.expect(names).to.not.include(\"Alvarez\"); });"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "272e644f-703d-54d4-8899-2d018bc79054"
+        },
+        {
+          "name": "Search by name",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "search"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"q\": \"reed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "3f5b52d2-d1a3-5d5b-8aef-ea0b30625798"
+        },
+        {
+          "name": "Get patient",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "ffeda274-334e-53c4-baf8-4d8dd9a4bdd8"
+        },
+        {
+          "name": "Care team",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/care-team",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "care-team"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "8bf1288f-1501-5b77-8b6a-3b232b57f9b7"
+        },
+        {
+          "name": "Register patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mrn\": \"HT-PM{{$randomInt}}\",\n  \"first_name\": \"Grace\",\n  \"last_name\": \"Morales\",\n  \"date_of_birth\": \"1963-02-11\",\n  \"sex\": \"female\",\n  \"qualifying_event\": \"pci\",\n  \"qualifying_event_date\": \"2026-10-19\",\n  \"referral_date\": \"2026-10-27\",\n  \"clinical_risk_category\": \"low\",\n  \"primary_clinician_id\": \"{{clinicianId}}\",\n  \"supervising_physician_id\": \"{{physicianId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"newPatientId\", pm.response.json().patient_id);"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "83ab213f-cc9b-51b2-afa5-784b489eb302"
+        },
+        {
+          "name": "Update patient (pause)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{newPatientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{newPatientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"program_status\": \"paused\",\n  \"enrollment_date\": \"2026-10-28\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "96b89467-4a20-5369-aace-21a60c755e08"
+        },
+        {
+          "name": "Invalid update is 422",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{newPatientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{newPatientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"target_sessions\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "c83ea147-7c51-5b9c-855b-d365d946c555"
+        },
+        {
+          "name": "Out-of-scope patient is 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{otherPatientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{otherPatientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "7c98790c-0900-5bbe-a3ab-711d5f95e4bf"
+        },
+        {
+          "name": "Patient reads own record",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "6b36033c-b76f-55eb-aa34-e3cef72ccf2b"
+        },
+        {
+          "name": "Patient cannot list patients (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "c6f47412-77c6-5b0a-9b59-d3e009c21844"
+        },
+        {
+          "name": "IT admin cannot read patients (403)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{itToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(403);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "86e528d5-d256-590e-af11-cbf4acf90aa2"
+        },
+        {
+          "name": "Admin soft-deletes new patient",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{newPatientId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{newPatientId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "5b2690f9-a9da-58c1-a6cb-c5f74fb306b1"
+        }
+      ]
+    },
+    {
+      "name": "3 Vital Signs",
+      "item": [
+        {
+          "name": "Patient app posts a reading",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recorded_at\": \"{{nowIso}}\",\n  \"context\": \"rest\",\n  \"heart_rate\": 68,\n  \"device_id\": \"{{bandId}}\",\n  \"idempotency_key\": \"{{runKey}}-single\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"vitalId\", pm.response.json().vital_id);",
+                  "pm.test(\"quality valid\", () => pm.expect(pm.response.json().quality).to.eql(\"valid\"));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "7e0894fe-e749-5344-901a-249b0a9d80e4"
+        },
+        {
+          "name": "Duplicate idempotency key is 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recorded_at\": \"{{nowIso}}\",\n  \"context\": \"rest\",\n  \"heart_rate\": 68,\n  \"device_id\": \"{{bandId}}\",\n  \"idempotency_key\": \"{{runKey}}-single\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 409\", () => pm.response.to.have.status(409));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(409);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "98bb2dea-ef24-5d33-bd42-e7915cdb6c33"
+        },
+        {
+          "name": "Out-of-range heart rate is 422",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recorded_at\": \"{{nowIso}}\",\n  \"context\": \"rest\",\n  \"heart_rate\": 400,\n  \"device_id\": \"{{bandId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "387a91c8-a256-5299-9a4c-87af91b9b3ec"
+        },
+        {
+          "name": "Batch upload",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals/batch",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals",
+                "batch"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"readings\": [\n    {\n      \"recorded_at\": \"{{dayAgoIso}}\",\n      \"context\": \"exercise\",\n      \"heart_rate\": 112,\n      \"device_id\": \"{{bandId}}\",\n      \"idempotency_key\": \"{{runKey}}-b1\"\n    },\n    {\n      \"recorded_at\": \"{{dayAgoIso}}\",\n      \"context\": \"recovery\",\n      \"systolic_bp\": 138,\n      \"diastolic_bp\": 80,\n      \"device_id\": \"{{cuffId}}\",\n      \"idempotency_key\": \"{{runKey}}-b2\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"2 accepted\", () => pm.expect(pm.response.json().accepted).to.eql(2));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "5e7aeca9-429b-55b2-89d5-9c4daac891ed"
+        },
+        {
+          "name": "Clinician manual entry",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recorded_at\": \"{{nowIso}}\",\n  \"context\": \"rest\",\n  \"systolic_bp\": 132,\n  \"diastolic_bp\": 82,\n  \"source\": \"manual\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "3bec32c2-29cb-5121-8e12-69eca2a27fd8"
+        },
+        {
+          "name": "Query last 24 hours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "b5228e31-d8ab-5313-b4fa-d177f6ab0c8a"
+        },
+        {
+          "name": "Query 7 days, exercise only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals?start={{weekAgo}}T00:00:00Z&end={{today}}T23:59:59Z&context=exercise&page_size=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals"
+              ],
+              "query": [
+                {
+                  "key": "start",
+                  "value": "{{weekAgo}}T00:00:00Z"
+                },
+                {
+                  "key": "end",
+                  "value": "{{today}}T23:59:59Z"
+                },
+                {
+                  "key": "context",
+                  "value": "exercise"
+                },
+                {
+                  "key": "page_size",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "f51a455b-b5ad-56c7-ae11-9112f9ea9822"
+        },
+        {
+          "name": "Latest readings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals/latest",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals",
+                "latest"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "a04017dd-b6b6-5696-9f62-502d841080e0"
+        },
+        {
+          "name": "Daily summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/vitals/daily-summary?start_date={{weekAgo}}&end_date={{today}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "vitals",
+                "daily-summary"
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "{{weekAgo}}"
+                },
+                {
+                  "key": "end_date",
+                  "value": "{{today}}"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "7384cffe-1872-5e78-b07c-fa0723053dff"
+        },
+        {
+          "name": "Get one reading",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vitals/{{vitalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vitals",
+                "{{vitalId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "0cb0bbc9-05a9-5253-ae55-7c312f7ec06d"
+        },
+        {
+          "name": "Mark reading as artifact",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vitals/{{vitalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vitals",
+                "{{vitalId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quality\": \"artifact\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "a7b841b1-bf01-5eff-b579-da6fc55793c0"
+        },
+        {
+          "name": "Other clinician cannot see it (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vitals/{{vitalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vitals",
+                "{{vitalId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{otherClinicianToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "59a36d7d-e346-50df-a417-33e1938fd24f"
+        },
+        {
+          "name": "Delete reading entered in error",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/vitals/{{vitalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "vitals",
+                "{{vitalId}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "e2d7a72a-80e0-5275-b818-5c91b880b7c1"
+        }
+      ]
+    },
+    {
+      "name": "4 Activity and Devices",
+      "item": [
+        {
+          "name": "Record today's activity",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/daily-activity/{{today}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "daily-activity",
+                "{{today}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"steps\": 7046,\n  \"active_minutes\": 48,\n  \"sedentary_minutes\": 552,\n  \"resting_hr\": 64,\n  \"distance_m\": 5120,\n  \"device_id\": \"{{trackerId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201 or 200\", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "766940e2-dd84-5c6a-81d6-259691cf6c67"
+        },
+        {
+          "name": "Get today's activity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/daily-activity/{{today}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "daily-activity",
+                "{{today}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "92b4fe34-f1b8-5846-8675-931e5fd41ae2"
+        },
+        {
+          "name": "Activity history",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/daily-activity?start_date={{weekAgo}}&end_date={{today}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "daily-activity"
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "{{weekAgo}}"
+                },
+                {
+                  "key": "end_date",
+                  "value": "{{today}}"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "9649d4da-2445-5ccb-be98-1c67a5cb07d1"
+        },
+        {
+          "name": "Weekly summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/daily-activity/summary?start_date={{weekAgo}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "daily-activity",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "{{weekAgo}}"
+                }
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "dd1b8ca2-67f4-54e5-90c9-7783fa1c7ba9"
+        },
+        {
+          "name": "Invalid activity is 422",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/daily-activity/{{today}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "daily-activity",
+                "{{today}}"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{patientToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"steps\": 10,\n  \"active_minutes\": 1000,\n  \"sedentary_minutes\": 600\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(422);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "4dbc9d6c-b8e7-5731-8db0-cfd5fe950a43"
+        },
+        {
+          "name": "List devices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}/devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "{{patientId}}",
+                "devices"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "bb135e08-79e4-5fd1-9aa3-8f832312ae48"
+        }
+      ]
+    },
+    {
+      "name": "5 Session end",
+      "item": [
+        {
+          "name": "Reusing rotated refresh token is 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Reuse detection revokes every session for the account.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{oldRefresh}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "ca00e9dd-e7af-57b3-ad36-b2ef71b74b3d"
+        },
+        {
+          "name": "Old access token now rejected",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "me"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"status is 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"problem+json body\", () => {",
+                  "  pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/problem+json\");",
+                  "  const b = pm.response.json(); pm.expect(b).to.have.property(\"request_id\"); pm.expect(b.status).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "_postman_id": "7157f43d-1232-5ccd-abe4-c91555ba89ad"
+        }
+      ]
+    }
+  ]
+}

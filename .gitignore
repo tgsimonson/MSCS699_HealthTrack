@@ -22,3 +22,10 @@ desktop.ini
 # local databases
 *.sqlite3
 *.db
+
+# phase 3 local runtime files
+healthtrack.db*
+phase3-backend/reports/coverage_html/
+phase3-backend/reports/junit-*.xml
+phase3-backend/reports/pytest-*.txt
+phase3-backend/reports/coverage.json
