@@ -1,0 +1,4 @@
+# pinned versions with prebuilt wheels for python 3.10 to 3.14 on macos, linux, and windows
+dash==3.2.0
+plotly==7.1.0
+httpx==0.28.1

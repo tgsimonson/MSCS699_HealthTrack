@@ -1,0 +1,217 @@
+{
+  "environment": {
+    "date": "2026-11-12T22:58:53+00:00",
+    "os": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 8,
+    "python": "3.12.13",
+    "browser": "chromium 153.0.8010.12"
+  },
+  "checks": [
+    {
+      "check": "Live readings appear on the chart with the posted values",
+      "result": "PASS",
+      "detail": "last three plotted [107, 108, 109], posted [107, 108, 109]"
+    },
+    {
+      "check": "Live readings clear the empty-chart label on a chart that started empty",
+      "result": "PASS",
+      "detail": "chart labels now ['Target zone 95-115', 'Exercise ceiling 128', 'Resting limit 90']"
+    },
+    {
+      "check": "Worklist order, names, and latest values match the API",
+      "result": "PASS",
+      "detail": "2 cards compared field by field"
+    },
+    {
+      "check": "Heart rate gauge matches the latest valid reading",
+      "result": "PASS",
+      "detail": "gauge 138, api 138"
+    },
+    {
+      "check": "Alert panel shows every active alert in scope",
+      "result": "PASS",
+      "detail": "panel 2, api 2"
+    },
+    {
+      "check": "Critical alerts carry a text label, not only color",
+      "result": "PASS",
+      "detail": "badge '\u25b2 CRITICAL'"
+    },
+    {
+      "check": "Readings above the ceiling are drawn red, as triangles, labeled Critical",
+      "result": "PASS",
+      "detail": "{'color': '#B42318', 'symbol': 'triangle-up', 'text': 'Critical reading, exercise'}"
+    },
+    {
+      "check": "Chart threshold lines come from the patient's effective thresholds",
+      "result": "PASS",
+      "detail": "ceiling 128.0, resting 90.0, drawn [90, 95, 128]"
+    },
+    {
+      "check": "24-hour heart rate chart plots every reading the API returns",
+      "result": "PASS",
+      "detail": "chart 46, api 46"
+    },
+    {
+      "check": "Acknowledging in the dashboard records the clinician in the API",
+      "result": "PASS",
+      "detail": "acknowledged_by 00000000-0000-4000-a000-000000000002"
+    },
+    {
+      "check": "After a dropped connection the stream reconnects and live updates resume",
+      "result": "PASS",
+      "detail": "live again after 1042 ms; next reading arrived"
+    }
+  ],
+  "load": {
+    "runs": [
+      {
+        "run": 1,
+        "dom_content_loaded_ms": 77.5,
+        "worklist_ms": 160.9,
+        "charts_ms": 690.3,
+        "live_ms": 712.8,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 2,
+        "dom_content_loaded_ms": 68.8,
+        "worklist_ms": 153.5,
+        "charts_ms": 677.3,
+        "live_ms": 690.7,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 3,
+        "dom_content_loaded_ms": 71,
+        "worklist_ms": 152.7,
+        "charts_ms": 675.8,
+        "live_ms": 690.1,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 4,
+        "dom_content_loaded_ms": 69.7,
+        "worklist_ms": 153.6,
+        "charts_ms": 673.8,
+        "live_ms": 691.9,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 5,
+        "dom_content_loaded_ms": 70.4,
+        "worklist_ms": 152.4,
+        "charts_ms": 680,
+        "live_ms": 707,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 6,
+        "dom_content_loaded_ms": 68.3,
+        "worklist_ms": 596.6,
+        "charts_ms": 762.3,
+        "live_ms": 774.1,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 7,
+        "dom_content_loaded_ms": 70.3,
+        "worklist_ms": 152.4,
+        "charts_ms": 667.9,
+        "live_ms": 691.2,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 8,
+        "dom_content_loaded_ms": 68.5,
+        "worklist_ms": 152.6,
+        "charts_ms": 670.1,
+        "live_ms": 690.3,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 9,
+        "dom_content_loaded_ms": 65.4,
+        "worklist_ms": 143.7,
+        "charts_ms": 653.2,
+        "live_ms": 674.1,
+        "transferred_kb": 98.4
+      },
+      {
+        "run": 10,
+        "dom_content_loaded_ms": 65.8,
+        "worklist_ms": 146.3,
+        "charts_ms": 670.9,
+        "live_ms": 690.1,
+        "transferred_kb": 98.4
+      }
+    ],
+    "worklist": {
+      "n": 10,
+      "p50_ms": 152.6,
+      "p95_ms": 596.6,
+      "max_ms": 596.6,
+      "min_ms": 143.7
+    },
+    "charts": {
+      "n": 10,
+      "p50_ms": 674.8,
+      "p95_ms": 762.3,
+      "max_ms": 762.3,
+      "min_ms": 653.2
+    },
+    "live": {
+      "n": 10,
+      "p50_ms": 691.0,
+      "p95_ms": 774.1,
+      "max_ms": 774.1,
+      "min_ms": 674.1
+    },
+    "target_ms": 3000
+  },
+  "live_reading": {
+    "to_browser": {
+      "n": 30,
+      "p50_ms": 12.4,
+      "p95_ms": 15.5,
+      "max_ms": 288.1,
+      "min_ms": 3.6
+    },
+    "on_chart": {
+      "n": 30,
+      "p50_ms": 122.3,
+      "p95_ms": 131.3,
+      "max_ms": 393.1,
+      "min_ms": 101.7
+    },
+    "target_ms": 5000
+  },
+  "alert_to_screen": {
+    "alert_panel": {
+      "n": 8,
+      "p50_ms": 254.6,
+      "p95_ms": 269.1,
+      "max_ms": 269.1,
+      "min_ms": 155.0
+    },
+    "worklist_resorted": {
+      "n": 8,
+      "p50_ms": 250.6,
+      "p95_ms": 265.1,
+      "max_ms": 265.1,
+      "min_ms": 152.0
+    },
+    "toast": {
+      "n": 8,
+      "p50_ms": 258.1,
+      "p95_ms": 274.1,
+      "max_ms": 274.1,
+      "min_ms": 156.0
+    },
+    "target_ms": 5000
+  },
+  "range_switch_7d_ms": 18.3,
+  "acknowledge_click_to_update_ms": 62.0,
+  "reconnect_ms": 1042.1
+}

@@ -1,0 +1,273 @@
+{
+  "title": "HealthTrack Alert Configuration: Thresholds, Rules, and Escalation",
+  "author": "Todd Simonson",
+  "course": "MSCS 699 Computer Science Capstone",
+  "instructor": "Michael Solomon",
+  "date": "November 15, 2026",
+  "sections": [
+    {
+      "heading": null,
+      "paras": [
+        "HealthTrack checks each reading as it arrives and runs trend rules every 15 minutes. Tables 1 to 3 give the default rules, the escalation policies, and how each setting is changed."
+      ]
+    },
+    {
+      "heading": "Thresholds and Rules",
+      "paras": [
+        "Each rule has a program default, but the value applied to a reading is resolved per patient in a fixed order: an active patient override, then the patient's current exercise prescription, then the default. Each alert records which source applied. Rules that need two consecutive readings filter out single motion artifacts, and readings flagged as suspect never alert.",
+        {
+          "table": {
+            "number": 1,
+            "title": "Default Alert Rules",
+            "font_size": 17,
+            "columns": [
+              {
+                "label": "Rule",
+                "width": 2300
+              },
+              {
+                "label": "Condition (default)",
+                "width": 2850
+              },
+              {
+                "label": "Personalized by",
+                "width": 1200
+              },
+              {
+                "label": "Readings",
+                "width": 1000
+              },
+              {
+                "label": "Severity",
+                "width": 860
+              },
+              {
+                "label": "Suppression",
+                "width": 1150
+              }
+            ],
+            "rows": [
+              [
+                "HR_ABOVE_CEILING",
+                "Exercise heart rate > 150 bpm",
+                "Prescription",
+                "2 in 30 min",
+                "Critical",
+                "Never"
+              ],
+              [
+                "SPO2_LOW",
+                "SpO2 < 90%, any context",
+                "Prescription",
+                "2 in 30 min",
+                "Critical",
+                "Never"
+              ],
+              [
+                "EXERCISE_SBP_HIGH",
+                "Exercise systolic > 200 mmHg",
+                "Prescription",
+                "1",
+                "High",
+                "30 min"
+              ],
+              [
+                "RESTING_SBP_LOW",
+                "Resting systolic < 90 mmHg",
+                "Override",
+                "1",
+                "High",
+                "4 h"
+              ],
+              [
+                "RESTING_HR_LOW",
+                "Resting heart rate < 40 bpm",
+                "Override",
+                "2 in 60 min",
+                "High",
+                "4 h"
+              ],
+              [
+                "MISSED_SESSIONS",
+                "2 prescribed sessions missed in a row",
+                "Override",
+                "Trend",
+                "High",
+                "24 h"
+              ],
+              [
+                "RESTING_SBP_HIGH",
+                "Resting systolic 160 mmHg or more",
+                "Override",
+                "1",
+                "Moderate",
+                "12 h"
+              ],
+              [
+                "RESTING_HR_HIGH",
+                "Resting heart rate > 100 bpm",
+                "Override",
+                "2 in 60 min",
+                "Moderate",
+                "12 h"
+              ],
+              [
+                "RESTING_HR_RISE",
+                "7-day resting HR > baseline + 8 bpm",
+                "Override",
+                "Trend",
+                "Moderate",
+                "24 h"
+              ],
+              [
+                "ZONE_MINUTES_DECLINE",
+                "Zone minutes down 25% week over week",
+                "Override",
+                "Trend",
+                "Moderate",
+                "24 h"
+              ],
+              [
+                "STEPS_DECLINE",
+                "Daily steps down 30% from prior week",
+                "Override",
+                "Trend",
+                "Moderate",
+                "24 h"
+              ],
+              [
+                "DATA_GAP",
+                "No readings for 48 hours",
+                "Override",
+                "Scheduled",
+                "Low",
+                "24 h"
+              ]
+            ],
+            "note": "Exercise rules use warmup, exercise, and cooldown readings; resting rules use rest readings only. Suppression is how long a repeat of the rule after a recent alert is logged without notifying."
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Prioritization, Alert Fatigue, and Escalation",
+      "paras": [
+        "Alarm fatigue is a recognized patient safety hazard because clinicians who receive frequent low-value alarms begin to miss the ones that matter (The Joint Commission, 2013). HealthTrack applies four controls in order: a repeat of an active alert is folded into it, a non-critical rule that fired recently is logged as suppressed for its window, a lower-severity alert on a measurement with a more severe active alert is masked, and a patient with more than four non-critical alerts in an hour has email and SMS moved to the digest. Critical alerts skip every control. Email and SMS carry only the severity, rule name, and a sign-in link, following the minimum necessary standard (U.S. Department of Health and Human Services, n.d.). An alert nobody acknowledges within its policy timeout moves up one level and notifies the next recipients (Table 2); acknowledging stops escalation, and the alert stays on the worklist until it is resolved with a note.",
+        {
+          "table": {
+            "number": 2,
+            "title": "Escalation Policies",
+            "font_size": 17,
+            "columns": [
+              {
+                "label": "Severity",
+                "width": 950
+              },
+              {
+                "label": "First notified",
+                "width": 2800
+              },
+              {
+                "label": "Level 1",
+                "width": 2350
+              },
+              {
+                "label": "Level 2",
+                "width": 3260
+              }
+            ],
+            "rows": [
+              [
+                "Critical",
+                "Clinicians: dashboard, SMS, email",
+                "Supervising physician, 15 min",
+                "Whole care team, all channels, 30 min"
+              ],
+              [
+                "High",
+                "Clinicians: dashboard, email",
+                "Supervising physician, 60 min",
+                "Whole care team, all channels, 120 min"
+              ],
+              [
+                "Moderate",
+                "Clinicians: dashboard",
+                "Supervising physician, 4 h",
+                "None"
+              ],
+              [
+                "Low",
+                "Clinicians: dashboard; email in digest",
+                "None",
+                "None"
+              ]
+            ],
+            "note": "Clinicians are the patient's primary and covering clinicians. Each level's timer starts when the previous level fired."
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Setting and Modifying Configuration",
+      "paras": [
+        "Each setting is changed through one API resource, limited to the role accountable for it (Table 3). Every change needs a written reason, is audited, keeps the earlier version, and applies from the next reading or scheduled check. GET /patients/{id}/alert-thresholds shows each value in force and its source.",
+        {
+          "table": {
+            "number": 3,
+            "title": "How Alert Configuration Is Changed",
+            "font_size": 17,
+            "columns": [
+              {
+                "label": "Setting",
+                "width": 2650
+              },
+              {
+                "label": "API call",
+                "width": 2850
+              },
+              {
+                "label": "Who",
+                "width": 1300
+              },
+              {
+                "label": "Validation",
+                "width": 2560
+              }
+            ],
+            "rows": [
+              [
+                "Program rule: default, readings, window, severity, suppression, active",
+                "PATCH /alert-rules/{code}",
+                "Physician",
+                "Critical rules keep suppression at zero"
+              ],
+              [
+                "Prescription: ceiling, target zone, SpO2 floor, exercise systolic, resting baseline",
+                "PUT /patients/{id}/prescription",
+                "Physician on care team",
+                "Resting < zone < ceiling; old version closed"
+              ],
+              [
+                "Override of a customizable rule for one patient",
+                "POST or DELETE /patients/{id}/alert-thresholds",
+                "Care team clinician or physician",
+                "Reason required; not for prescription-driven rules"
+              ],
+              [
+                "Escalation policy: timeout, role, levels, channels, digest",
+                "PUT /escalation-policies/{severity}",
+                "Physician or administrator",
+                "Critical within 30 min; digest for low only; dashboard always on"
+              ]
+            ],
+            "note": "Paths are under /api/v1. Job intervals, the digest hour, and the storm limit are environment settings."
+          }
+        }
+      ]
+    }
+  ],
+  "references": [
+    "The Joint Commission. (2013, April 8). Medical device alarm safety in hospitals. *Sentinel Event Alert*, (50). https://www.jointcommission.org/sea_issue_50",
+    "U.S. Department of Health and Human Services. (n.d.). *Minimum necessary requirement*. Retrieved November 10, 2026, from https://www.hhs.gov/hipaa/for-professionals/privacy/guidance/minimum-necessary-requirement/index.html"
+  ]
+}

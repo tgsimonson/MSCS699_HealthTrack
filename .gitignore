@@ -29,3 +29,13 @@ phase3-backend/reports/coverage_html/
 phase3-backend/reports/junit-*.xml
 phase3-backend/reports/pytest-*.txt
 phase3-backend/reports/coverage.json
+
+# phase 4 local runtime files
+phase4-alert-system/outbox/
+phase4-alert-system/reports/coverage_html/
+phase4-alert-system/reports/junit-*.xml
+phase4-alert-system/reports/pytest-*.txt
+phase4-alert-system/reports/coverage.json
+phase4-dashboard/reports/junit-*.xml
+phase4-dashboard/reports/pytest-*.txt
+phase4-dashboard/reports/coverage.json

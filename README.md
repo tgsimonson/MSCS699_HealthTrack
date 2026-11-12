@@ -14,7 +14,8 @@ All patient data in this repository is synthetic. No real protected health infor
 | 1. Proposal | Oct 25 | [`phase1-proposal/`](phase1-proposal/) | Proposal, requirements matrix, stakeholder analysis diagram, Gantt chart |
 | 2. Data layer and API design | Nov 1 | [`phase2-data-api/`](phase2-data-api/) | ERD, SQL schema scripts, OpenAPI (Swagger) specification, design rationale |
 | 3. Backend implementation | Nov 8 | [`phase3-backend/`](phase3-backend/) | SQLAlchemy models, Alembic migrations, data access layer, FastAPI endpoints with JWT auth, tests, Postman collection |
-| 4. Alert system and dashboard | Nov 15 | | Real-time alerts and Dash dashboard |
+| 4. Alert system | Nov 15 | [`phase4-alert-system/`](phase4-alert-system/) | Threshold and pattern alerts, prioritization and fatigue controls, notifications, escalation, alert history, WebSocket stream |
+| 4. Monitoring dashboard | Nov 15 | [`phase4-dashboard/`](phase4-dashboard/) | Real-time Dash (Plotly) dashboard with gauges, trend charts, color-coded alerts, and live updates |
 | 5. Risk assessment | Nov 22 | | Risk scoring, prediction, and reporting |
 | 6. Performance optimization | Nov 29 | | Profiling, optimizations, benchmarks |
 | 7. Final submission and presentation | Dec 6 | | Integrated system, deployment package, final report, recording |
@@ -55,6 +56,25 @@ pip install -r requirements-dev.txt
 python3 -m alembic upgrade head && python3 -m scripts.seed
 python3 -m uvicorn app.main:app --reload     # then open http://localhost:8000/docs
 python3 -m pytest                            # run the test suite
+```
+
+## Phase 4 at a glance
+
+The alert system extends the Phase 3 backend (copied forward; `phase3-backend/` stays as submitted). The dashboard
+is a separate client of that API. See each folder's README for setup and the deliverable map.
+
+```bash
+# terminal 1: api with the alert engine
+cd phase4-alert-system && uv venv && source .venv/bin/activate && uv pip install -r requirements-dev.txt
+python3 -m alembic upgrade head && python3 -m scripts.seed
+python3 -m uvicorn app.main:app
+
+# terminal 2: dashboard, then open http://localhost:8050
+cd phase4-dashboard && uv venv && source .venv/bin/activate && uv pip install -r requirements-dev.txt
+python3 -m dashboard
+
+# terminal 3 (optional): live device data
+cd phase4-alert-system && source .venv/bin/activate && python3 -m scripts.simulate_devices
 ```
 
 ## Stack

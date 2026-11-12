@@ -1,0 +1,179 @@
+{
+  "environment": {
+    "date": "2026-11-12T22:55:31+00:00",
+    "os": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "cpu_count": 8,
+    "python": "3.12.13",
+    "database": "sqlite",
+    "load": {
+      "patients": 100,
+      "days": 14,
+      "iterations": 200,
+      "e2e": 50
+    },
+    "database_version": "3.53.3"
+  },
+  "dataset": {
+    "vital_signs_rows": 119750,
+    "active_patients": 105,
+    "load_seconds": 3.52
+  },
+  "rule_evaluation": {
+    "normal_reading": {
+      "n": 200,
+      "p50_ms": 0.52,
+      "p95_ms": 0.68,
+      "p99_ms": 1.11,
+      "mean_ms": 0.55,
+      "max_ms": 1.38
+    },
+    "breach_repeat": {
+      "n": 200,
+      "p50_ms": 1.24,
+      "p95_ms": 1.36,
+      "p99_ms": 1.5,
+      "mean_ms": 1.26,
+      "max_ms": 1.56
+    },
+    "breach_new_alert": {
+      "n": 200,
+      "p50_ms": 1.48,
+      "p95_ms": 1.7,
+      "p99_ms": 2.15,
+      "mean_ms": 1.52,
+      "max_ms": 3.15
+    }
+  },
+  "ingestion": {
+    "single_rules_on": {
+      "n": 200,
+      "p50_ms": 3.43,
+      "p95_ms": 4.53,
+      "p99_ms": 5.26,
+      "mean_ms": 3.66,
+      "max_ms": 9.15
+    },
+    "single_rules_off": {
+      "n": 200,
+      "p50_ms": 3.07,
+      "p95_ms": 3.78,
+      "p99_ms": 6.89,
+      "mean_ms": 3.32,
+      "max_ms": 27.7
+    },
+    "batch500_rules_on": {
+      "n": 10,
+      "p50_ms": 69.19,
+      "p95_ms": 84.66,
+      "p99_ms": 92.09,
+      "mean_ms": 71.87,
+      "max_ms": 93.95,
+      "readings_per_second": 7227
+    },
+    "batch500_rules_off": {
+      "n": 10,
+      "p50_ms": 72.54,
+      "p95_ms": 114.92,
+      "p99_ms": 129.16,
+      "mean_ms": 82.54,
+      "max_ms": 132.72,
+      "readings_per_second": 6893
+    },
+    "single_overhead_p50_ms": 0.36
+  },
+  "end_to_end": {
+    "reading_to_vital_event": {
+      "n": 50,
+      "p50_ms": 9.1,
+      "p95_ms": 13.86,
+      "p99_ms": 14.86,
+      "mean_ms": 9.5,
+      "max_ms": 15.06
+    },
+    "reading_to_alert_event": {
+      "n": 50,
+      "p50_ms": 9.36,
+      "p95_ms": 14.34,
+      "p99_ms": 15.26,
+      "mean_ms": 9.83,
+      "max_ms": 15.56
+    },
+    "reading_to_dashboard_notification": {
+      "n": 50,
+      "p50_ms": 9.61,
+      "p95_ms": 14.66,
+      "p99_ms": 15.62,
+      "mean_ms": 10.19,
+      "max_ms": 15.98
+    },
+    "target_p95_ms": 5000
+  },
+  "dispatch_delay": {
+    "dashboard": {
+      "n": 50,
+      "p50_ms": 3.58,
+      "p95_ms": 6.23,
+      "p99_ms": 8.48,
+      "mean_ms": 3.96,
+      "max_ms": 9.2
+    },
+    "email": {
+      "n": 50,
+      "p50_ms": 3.58,
+      "p95_ms": 6.23,
+      "p99_ms": 8.48,
+      "mean_ms": 3.96,
+      "max_ms": 9.2
+    },
+    "sms": {
+      "n": 50,
+      "p50_ms": 3.58,
+      "p95_ms": 6.23,
+      "p99_ms": 8.48,
+      "mean_ms": 3.96,
+      "max_ms": 9.2
+    }
+  },
+  "jobs": {
+    "pattern_run_seconds": 0.335,
+    "patients": 105,
+    "pattern_ms_per_patient": 3.19,
+    "pattern_outcomes": 3,
+    "escalation_run_seconds": 0.039,
+    "open_alerts_checked": 108,
+    "escalated": 108
+  },
+  "alert_fatigue": {
+    "readings": 192,
+    "threshold_crossings": 150,
+    "alerts_created": 8,
+    "repeats_folded": 5,
+    "suppressed": 93,
+    "notifications": 8,
+    "alerts_per_crossing": 0.053
+  },
+  "fanout": [
+    {
+      "subscribers": 1,
+      "events": 1000,
+      "deliveries": 1000,
+      "publish_us_per_event": 8.8,
+      "deliveries_per_second": 113825
+    },
+    {
+      "subscribers": 10,
+      "events": 1000,
+      "deliveries": 10000,
+      "publish_us_per_event": 39.5,
+      "deliveries_per_second": 253007
+    },
+    {
+      "subscribers": 50,
+      "events": 1000,
+      "deliveries": 50000,
+      "publish_us_per_event": 200.0,
+      "deliveries_per_second": 249982
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "environment": {
+    "date": "2026-11-12T22:55:45+00:00",
+    "os": "macOS-26.5.1-arm64-arm-64bit",
+    "machine": "arm64",
+    "processor": "arm",
+    "cpu_count": 8,
+    "python": "3.12.13",
+    "database": "sqlite",
+    "database_version": "3.53.3",
+    "load": {
+      "patients": 100,
+      "days": 14,
+      "per_day": 96,
+      "iterations": 200
+    }
+  },
+  "dataset": {
+    "vital_signs_rows": 135850,
+    "patients": 108,
+    "load_seconds": 3.91
+  },
+  "login": {
+    "n": 10,
+    "p50_ms": 237.07,
+    "p95_ms": 263.3,
+    "p99_ms": 279.26,
+    "mean_ms": 241.73,
+    "max_ms": 283.25
+  },
+  "ingest_single": {
+    "n": 200,
+    "p50_ms": 3.85,
+    "p95_ms": 4.7,
+    "p99_ms": 6.03,
+    "mean_ms": 3.98,
+    "max_ms": 8.59
+  },
+  "ingest_batch_500": {
+    "n": 20,
+    "p50_ms": 67.66,
+    "p95_ms": 97.52,
+    "p99_ms": 98.75,
+    "mean_ms": 74.46,
+    "max_ms": 99.06,
+    "readings_per_second": 6715,
+    "replay_duplicates": 500,
+    "replay_ms": 54.43
+  },
+  "endpoints": {
+    "GET /patients (worklist page)": {
+      "n": 200,
+      "p50_ms": 2.66,
+      "p95_ms": 3.0,
+      "p99_ms": 3.84,
+      "mean_ms": 2.74,
+      "max_ms": 7.62
+    },
+    "GET /patients/{id}/vitals (24 h page)": {
+      "n": 200,
+      "p50_ms": 3.99,
+      "p95_ms": 4.8,
+      "p99_ms": 6.03,
+      "mean_ms": 4.11,
+      "max_ms": 7.15
+    },
+    "GET /patients/{id}/vitals (7 days, page 1 of n)": {
+      "n": 200,
+      "p50_ms": 6.45,
+      "p95_ms": 8.26,
+      "p99_ms": 30.91,
+      "mean_ms": 7.31,
+      "max_ms": 33.47
+    },
+    "GET /patients/{id}/vitals/latest": {
+      "n": 200,
+      "p50_ms": 5.53,
+      "p95_ms": 6.37,
+      "p99_ms": 6.66,
+      "mean_ms": 5.62,
+      "max_ms": 7.47
+    },
+    "GET /patients/{id}/vitals/daily-summary (21 days)": {
+      "n": 200,
+      "p50_ms": 11.22,
+      "p95_ms": 12.74,
+      "p99_ms": 13.95,
+      "mean_ms": 11.45,
+      "max_ms": 16.98
+    },
+    "GET /patients/{id}/daily-activity/summary": {
+      "n": 200,
+      "p50_ms": 2.65,
+      "p95_ms": 2.93,
+      "p99_ms": 3.37,
+      "mean_ms": 2.7,
+      "max_ms": 4.58
+    },
+    "POST /patients/search": {
+      "n": 200,
+      "p50_ms": 2.92,
+      "p95_ms": 3.96,
+      "p99_ms": 5.98,
+      "mean_ms": 3.25,
+      "max_ms": 27.75
+    }
+  },
+  "index_effectiveness": {
+    "query": "readings for one patient in a 24-hour window, newest 200",
+    "patient_total_rows": 10521,
+    "rows_returned": 33,
+    "with_index": {
+      "n": 200,
+      "p50_ms": 0.04,
+      "p95_ms": 0.04,
+      "p99_ms": 0.06,
+      "mean_ms": 0.04,
+      "max_ms": 0.08
+    },
+    "without_index": {
+      "n": 40,
+      "p50_ms": 3.5,
+      "p95_ms": 4.63,
+      "p99_ms": 5.01,
+      "mean_ms": 3.66,
+      "max_ms": 5.15
+    },
+    "speedup_p50": 87.5,
+    "plan_with_index": "SEARCH vital_signs USING INDEX ix_vital_signs_patient_time (patient_id=? AND recorded_at>? AND recorded_at<?)",
+    "plan_without_index": "SEARCH vital_signs USING INDEX sqlite_autoindex_vital_signs_1 (patient_id=?) | USE TEMP B-TREE FOR ORDER BY"
+  }
+}

@@ -1,0 +1,442 @@
+[
+  {
+    "id": "AS-01",
+    "title": "Exercise heart rate above the prescribed ceiling on 2 consecutive readings raises a critical alert and queues dashboard, SMS, and email for the primary clinician",
+    "requirement": "FR-10, FR-12, FR-13",
+    "test": "tests/test_alert_engine.py::test_critical_hr_above_prescribed_ceiling",
+    "outcome": "passed",
+    "seconds": 0.019876624923199415
+  },
+  {
+    "id": "AS-02",
+    "title": "The same heart rate does not alert for a patient whose prescribed ceiling is higher",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_same_value_patient_specific",
+    "outcome": "passed",
+    "seconds": 0.010641208151355386
+  },
+  {
+    "id": "AS-03",
+    "title": "A single breaching reading does not alert when the rule needs consecutive readings",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_single_spike_filtered",
+    "outcome": "passed",
+    "seconds": 0.0026394580490887165
+  },
+  {
+    "id": "AS-04",
+    "title": "Breaching readings farther apart than the rule window are not consecutive",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_consecutive_window",
+    "outcome": "passed",
+    "seconds": 0.002847125055268407
+  },
+  {
+    "id": "AS-05",
+    "title": "Context filters: a resting reading never triggers the exercise ceiling rule, but two high resting readings trigger the resting rule",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_context_filters",
+    "outcome": "passed",
+    "seconds": 0.01574937510304153
+  },
+  {
+    "id": "AS-06",
+    "title": "Suspect readings (implausible values) are stored but never alert",
+    "requirement": "FR-07, FR-10",
+    "test": "tests/test_alert_engine.py::test_suspect_never_alerts",
+    "outcome": "passed",
+    "seconds": 0.0016642920672893524
+  },
+  {
+    "id": "AS-07",
+    "title": "A patient override (beta-blocker, resting limit 90) takes precedence over the program default",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_override_precedence",
+    "outcome": "passed",
+    "seconds": 0.011989125050604343
+  },
+  {
+    "id": "AS-08",
+    "title": "Without a prescription the program default applies and is labeled as the source",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_default_without_prescription",
+    "outcome": "passed",
+    "seconds": 0.009360041003674269
+  },
+  {
+    "id": "AS-09",
+    "title": "SpO2 below the prescription floor raises a critical alert in any context",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_spo2_low",
+    "outcome": "passed",
+    "seconds": 0.006867582909762859
+  },
+  {
+    "id": "AS-10",
+    "title": "Blood pressure rules: exercise systolic above the prescribed maximum is high; resting systolic at or above 160 is moderate",
+    "requirement": "FR-10",
+    "test": "tests/test_alert_engine.py::test_bp_rules",
+    "outcome": "passed",
+    "seconds": 0.012081249849870801
+  },
+  {
+    "id": "AS-11",
+    "title": "Missed sessions: no exercise session for a week (3 prescribed per week) raises a high alert; the adherent control stays silent",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_missed_sessions",
+    "outcome": "passed",
+    "seconds": 0.00014399993233382702
+  },
+  {
+    "id": "AS-12",
+    "title": "Minutes in the prescribed heart rate zone falling at least 25% week over week raises a moderate alert; the control stays silent",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_zone_minutes_decline",
+    "outcome": "passed",
+    "seconds": 0.00013691699132323265
+  },
+  {
+    "id": "AS-13",
+    "title": "7-day resting heart rate more than 8 bpm above the prescription baseline raises a moderate alert; the control stays silent",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_resting_hr_rise",
+    "outcome": "passed",
+    "seconds": 0.000138541916385293
+  },
+  {
+    "id": "AS-14",
+    "title": "Average daily steps falling at least 30% from the week before raises a moderate alert; the control stays silent",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_steps_decline",
+    "outcome": "passed",
+    "seconds": 0.00014054100029170513
+  },
+  {
+    "id": "AS-15",
+    "title": "No readings for 48 hours raises a low-severity data-gap alert; recent data stays silent",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_data_gap",
+    "outcome": "passed",
+    "seconds": 0.00012625008821487427
+  },
+  {
+    "id": "AS-16",
+    "title": "Too little history never looks like a decline: trends need 4+ days in each week and a minimum baseline",
+    "requirement": "FR-11",
+    "test": "tests/test_alert_patterns.py::test_insufficient_data",
+    "outcome": "passed",
+    "seconds": 0.00206091720610857
+  },
+  {
+    "id": "AS-17",
+    "title": "Repeated breaches attach to the open alert instead of creating new alerts or notifications",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_repeats_absorbed",
+    "outcome": "passed",
+    "seconds": 0.017016584053635597
+  },
+  {
+    "id": "AS-18",
+    "title": "After resolution, the same moderate rule inside its suppression window is logged as suppressed with no notifications; after the window it alerts again",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_suppression_window",
+    "outcome": "passed",
+    "seconds": 0.022906959056854248
+  },
+  {
+    "id": "AS-19",
+    "title": "Critical alerts are never suppressed: a repeat right after resolution notifies again",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_critical_never_suppressed",
+    "outcome": "passed",
+    "seconds": 0.01534408307634294
+  },
+  {
+    "id": "AS-20",
+    "title": "An active high-severity alert masks a lower-severity alert on the same measurement",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_masking",
+    "outcome": "passed",
+    "seconds": 0.010010625002905726
+  },
+  {
+    "id": "AS-21",
+    "title": "Low-severity alerts reach the dashboard now and email in the next morning digest",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_low_goes_to_digest",
+    "outcome": "passed",
+    "seconds": 0.005669208941981196
+  },
+  {
+    "id": "AS-22",
+    "title": "Alert-storm cap: past the hourly limit, a patient's non-critical email and SMS go to the digest while the dashboard is still notified immediately",
+    "requirement": "FR-12",
+    "test": "tests/test_alert_engine.py::test_storm_cap",
+    "outcome": "passed",
+    "seconds": 0.021598540944978595
+  },
+  {
+    "id": "AS-23",
+    "title": "Critical notifications are dispatched before lower-priority ones that were queued earlier",
+    "requirement": "FR-12",
+    "test": "tests/test_notifications.py::test_critical_first",
+    "outcome": "passed",
+    "seconds": 0.011925874976441264
+  },
+  {
+    "id": "AS-24",
+    "title": "Notification payload carries alert id, patient id, severity, rule, triggering values, and time; email and SMS text carry no patient name, MRN, or measured values",
+    "requirement": "FR-13, NFR-06",
+    "test": "tests/test_notifications.py::test_payload_and_minimum_necessary",
+    "outcome": "passed",
+    "seconds": 0.008078624960035086
+  },
+  {
+    "id": "AS-25",
+    "title": "Dispatch sends every due message, logs a 'notified' history event per delivery, and writes email and SMS to the outbox when no gateway is configured",
+    "requirement": "FR-13",
+    "test": "tests/test_notifications.py::test_dispatch_logs_delivery",
+    "outcome": "passed",
+    "seconds": 0.011244917055591941
+  },
+  {
+    "id": "AS-26",
+    "title": "A failing channel retries with backoff (15 s, then 30 s) and is marked failed with a reason after 3 attempts, without blocking other channels",
+    "requirement": "FR-13",
+    "test": "tests/test_notifications.py::test_retry_then_fail",
+    "outcome": "passed",
+    "seconds": 0.011532792123034596
+  },
+  {
+    "id": "AS-27",
+    "title": "Low-severity email is held for the morning digest and several alerts go out as one message per recipient",
+    "requirement": "FR-12",
+    "test": "tests/test_notifications.py::test_digest_groups_messages",
+    "outcome": "passed",
+    "seconds": 0.01768854190595448
+  },
+  {
+    "id": "AS-28",
+    "title": "SMS needs a phone number on the recipient account, and the digest message lists each alert with its sign-in link",
+    "requirement": "FR-13",
+    "test": "tests/test_notifications.py::test_sms_requires_phone_and_digest_text",
+    "outcome": "passed",
+    "seconds": 0.00628583412617445
+  },
+  {
+    "id": "AS-29",
+    "title": "A clinician on the care team acknowledges an alert; who and when are recorded in the alert history and the audit log",
+    "requirement": "FR-14, NFR-05",
+    "test": "tests/test_api_alerts.py::test_acknowledge",
+    "outcome": "passed",
+    "seconds": 0.013404000084847212
+  },
+  {
+    "id": "AS-30",
+    "title": "Patients and administrators cannot acknowledge (403); a clinician outside the care team gets 404 and the attempt is audited",
+    "requirement": "FR-14, NFR-04",
+    "test": "tests/test_api_alerts.py::test_ack_permissions[admin-403]",
+    "outcome": "passed",
+    "seconds": 0.0038370839320123196
+  },
+  {
+    "id": "AS-30",
+    "title": "Patients and administrators cannot acknowledge (403); a clinician outside the care team gets 404 and the attempt is audited",
+    "requirement": "FR-14, NFR-04",
+    "test": "tests/test_api_alerts.py::test_ack_permissions[it-403]",
+    "outcome": "passed",
+    "seconds": 0.0039070420898497105
+  },
+  {
+    "id": "AS-30",
+    "title": "Patients and administrators cannot acknowledge (403); a clinician outside the care team gets 404 and the attempt is audited",
+    "requirement": "FR-14, NFR-04",
+    "test": "tests/test_api_alerts.py::test_ack_permissions[marcus-404]",
+    "outcome": "passed",
+    "seconds": 0.0062991660088300705
+  },
+  {
+    "id": "AS-30",
+    "title": "Patients and administrators cannot acknowledge (403); a clinician outside the care team gets 404 and the attempt is audited",
+    "requirement": "FR-14, NFR-04",
+    "test": "tests/test_api_alerts.py::test_ack_permissions[robert_login-403]",
+    "outcome": "passed",
+    "seconds": 0.003797207958996296
+  },
+  {
+    "id": "AS-31",
+    "title": "Resolution needs a note, records acknowledgment if missing, and closed alerts reject further actions",
+    "requirement": "FR-14",
+    "test": "tests/test_alert_engine.py::test_resolution_rules",
+    "outcome": "passed",
+    "seconds": 0.008244750089943409
+  },
+  {
+    "id": "AS-32",
+    "title": "An unacknowledged critical alert escalates to the supervising physician at 15 minutes (not before), to the whole care team on every channel at 30 minutes, and stops at the maximum level",
+    "requirement": "FR-15",
+    "test": "tests/test_alert_engine.py::test_escalation_ladder",
+    "outcome": "passed",
+    "seconds": 0.026801500003784895
+  },
+  {
+    "id": "AS-33",
+    "title": "Acknowledging an alert stops escalation",
+    "requirement": "FR-14, FR-15",
+    "test": "tests/test_alert_engine.py::test_ack_stops_escalation",
+    "outcome": "passed",
+    "seconds": 0.007907999912276864
+  },
+  {
+    "id": "AS-34",
+    "title": "Moderate alerts escalate once (after 4 hours); low alerts never escalate",
+    "requirement": "FR-15",
+    "test": "tests/test_alert_engine.py::test_policy_levels",
+    "outcome": "passed",
+    "seconds": 0.012006707955151796
+  },
+  {
+    "id": "AS-35",
+    "title": "History search filters by patient, severity, status, rule, date range, and acknowledging user, with correct paging",
+    "requirement": "FR-16",
+    "test": "tests/test_api_alerts.py::test_history_search",
+    "outcome": "passed",
+    "seconds": 0.06570979114621878
+  },
+  {
+    "id": "AS-36",
+    "title": "Alert detail returns the full timeline (created, notified, acknowledged, resolved) and minutes from trigger to acknowledgment and resolution",
+    "requirement": "FR-16",
+    "test": "tests/test_api_alerts.py::test_detail_timeline",
+    "outcome": "passed",
+    "seconds": 0.0076578338630497456
+  },
+  {
+    "id": "AS-37",
+    "title": "Metrics report counts by severity and status and minutes to acknowledge, for clinicians (their team) and admins (whole program)",
+    "requirement": "FR-16, FR-26",
+    "test": "tests/test_api_alerts.py::test_metrics",
+    "outcome": "passed",
+    "seconds": 0.01291545806452632
+  },
+  {
+    "id": "AS-38",
+    "title": "Only a physician changes program rules, the reason is audited, and a critical rule cannot be given a suppression window",
+    "requirement": "FR-12, NFR-05",
+    "test": "tests/test_api_alerts.py::test_rule_changes",
+    "outcome": "passed",
+    "seconds": 0.020797667093575
+  },
+  {
+    "id": "AS-39",
+    "title": "A physician issues a new prescription version; the next reading is judged against the new ceiling",
+    "requirement": "FR-02, FR-10",
+    "test": "tests/test_api_alerts.py::test_prescription_endpoint",
+    "outcome": "passed",
+    "seconds": 0.033353665843605995
+  },
+  {
+    "id": "AS-40",
+    "title": "Patient-specific thresholds need a clinical reason, are refused for prescription-driven rules, and removing one falls back to the default",
+    "requirement": "FR-10",
+    "test": "tests/test_api_alerts.py::test_patient_thresholds",
+    "outcome": "passed",
+    "seconds": 0.04471887485124171
+  },
+  {
+    "id": "AS-41",
+    "title": "Escalation policies are validated: critical must escalate within 30 minutes, only low may use the digest, and the dashboard channel is required",
+    "requirement": "FR-15",
+    "test": "tests/test_api_alerts.py::test_policy_updates",
+    "outcome": "passed",
+    "seconds": 0.02648120792582631
+  },
+  {
+    "id": "AS-42",
+    "title": "A dashboard connected with a ticket receives the new readings and the critical alert pushed over the websocket within the 5-second target",
+    "requirement": "FR-18, NFR-07",
+    "test": "tests/test_realtime.py::test_push_reading_and_alert",
+    "outcome": "passed",
+    "seconds": 0.0257256249897182
+  },
+  {
+    "id": "AS-43",
+    "title": "Tickets are single-use; a reused or invalid ticket and a wrong origin are refused",
+    "requirement": "NFR-03",
+    "test": "tests/test_realtime.py::test_ticket_rules",
+    "outcome": "passed",
+    "seconds": 0.013461582828313112
+  },
+  {
+    "id": "AS-44",
+    "title": "Events are filtered by care team: a clinician never receives another team's patient",
+    "requirement": "NFR-04",
+    "test": "tests/test_realtime.py::test_scope_filtering",
+    "outcome": "passed",
+    "seconds": 0.03084625001065433
+  },
+  {
+    "id": "AS-45",
+    "title": "Subscribing to one patient narrows reading events, while alerts still arrive for every patient in scope",
+    "requirement": "FR-18",
+    "test": "tests/test_realtime.py::test_subscription_narrows_vitals",
+    "outcome": "passed",
+    "seconds": 0.0807906249538064
+  },
+  {
+    "id": "AS-46",
+    "title": "Dashboard notifications go only to their recipient's open sessions",
+    "requirement": "FR-13",
+    "test": "tests/test_realtime.py::test_notification_goes_to_recipient",
+    "outcome": "passed",
+    "seconds": 0.025424832943826914
+  },
+  {
+    "id": "AS-47",
+    "title": "A device batch that crosses the ceiling returns alerts_raised and the alert appears on the care team's worklist, with repeats folded into it",
+    "requirement": "FR-10, FR-18",
+    "test": "tests/test_api_alerts.py::test_batch_raises_alert",
+    "outcome": "passed",
+    "seconds": 0.05204966594465077
+  },
+  {
+    "id": "AS-48",
+    "title": "If alert evaluation fails, the reading is still stored and the request succeeds",
+    "requirement": "NFR-12",
+    "test": "tests/test_api_alerts.py::test_evaluation_failure_never_loses_readings",
+    "outcome": "passed",
+    "seconds": 0.010885374853387475
+  },
+  {
+    "id": "AS-49",
+    "title": "The monitoring worklist ranks the patient with a critical alert first and carries latest values and prescription limits",
+    "requirement": "FR-17, NFR-15",
+    "test": "tests/test_api_alerts.py::test_worklist",
+    "outcome": "passed",
+    "seconds": 0.02738604205660522
+  },
+  {
+    "id": "AS-50",
+    "title": "Uploading a day of activity re-checks trend rules, so a step decline alerts without waiting for the scheduled job",
+    "requirement": "FR-11",
+    "test": "tests/test_api_alerts.py::test_activity_upload_triggers_patterns",
+    "outcome": "passed",
+    "seconds": 0.023813999956473708
+  },
+  {
+    "id": "AS-51",
+    "title": "Migration 0003 adds the alerting tables with the 12 default rules and 4 escalation policies to an existing phase 3 database, and downgrades cleanly",
+    "requirement": "NFR-17",
+    "test": "tests/test_migrations.py::test_schema_update_0003_adds_alerting",
+    "outcome": "passed",
+    "seconds": 0.11871733283624053
+  },
+  {
+    "id": "AS-52",
+    "title": "Background workers send queued notifications as soon as they are woken, without waiting for the poll interval",
+    "requirement": "NFR-07",
+    "test": "tests/test_realtime.py::test_workers_dispatch_on_wake",
+    "outcome": "passed",
+    "seconds": 0.01863675005733967
+  }
+]

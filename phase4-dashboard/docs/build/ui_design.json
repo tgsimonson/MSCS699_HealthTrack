@@ -1,0 +1,124 @@
+{
+  "title": "HealthTrack Monitoring Dashboard: User Interface Design",
+  "author": "Todd Simonson",
+  "course": "MSCS 699 Computer Science Capstone",
+  "instructor": "Michael Solomon",
+  "date": "November 15, 2026",
+  "sections": [
+    {
+      "heading": null,
+      "paras": [
+        "The dashboard serves rehab clinicians who check a caseload of home patients between other tasks, so it answers three questions in order: who needs attention first, how the readings compare with that patient's own limits, and what action is required."
+      ]
+    },
+    {
+      "heading": "Layout",
+      "paras": [
+        "A fixed header sits above three columns that read left to right as triage, assessment, and action (Figure 1): the worklist ranked by most severe active alert; the selected patient's prescription, gauges, and trend charts; and the active alerts with their actions (Table 1).",
+        {
+          "figure": {
+            "number": 1,
+            "title": "Dashboard During a Critical Heart Rate Alert",
+            "image": "../images/overview_critical.png",
+            "width_in": 4.6,
+            "aspect": 0.7593,
+            "note": "Synthetic data. Thomas Reed's last two exercise readings exceeded his prescribed 128 bpm ceiling, so his card moved to the top, the readings are drawn as red triangles, and a pop-up was sent to his clinician."
+          }
+        },
+        {
+          "table": {
+            "number": 1,
+            "title": "Components, Data Sources, and Update Method",
+            "font_size": 17,
+            "columns": [
+              {
+                "label": "Component",
+                "width": 1650
+              },
+              {
+                "label": "Purpose",
+                "width": 3450
+              },
+              {
+                "label": "Source",
+                "width": 2050
+              },
+              {
+                "label": "Updates",
+                "width": 2210
+              }
+            ],
+            "rows": [
+              [
+                "Worklist cards",
+                "Rank patients; latest values and top alert",
+                "Monitoring worklist",
+                "Each live event"
+              ],
+              [
+                "Patient header",
+                "Identity, risk, and prescription limits",
+                "Patient and prescription",
+                "On selection"
+              ],
+              [
+                "Gauges",
+                "Latest valid value against the patient's limits",
+                "Latest readings",
+                "Each reading (patched)"
+              ],
+              [
+                "Trend charts",
+                "Heart rate, blood pressure, and SpO2 with zone and threshold lines",
+                "Readings, thresholds",
+                "Each reading (appended)"
+              ],
+              [
+                "Activity chart",
+                "14 days of steps and resting heart rate against baseline",
+                "Daily activity",
+                "On selection"
+              ],
+              [
+                "Alert panel",
+                "Active alerts, acknowledge and resolve",
+                "Alert search",
+                "Each alert event"
+              ],
+              [
+                "Pop-ups",
+                "Notifications addressed to this clinician",
+                "Notification events",
+                "On arrival"
+              ],
+              [
+                "Connection pill",
+                "Live, or reconnecting with polling",
+                "WebSocket state",
+                "On change"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Interaction Flow",
+      "paras": [
+        "After sign-in the top-ranked patient is already selected, so the highest-priority view takes zero clicks, inside the two-click limit of requirement NFR-15. When an alert arrives, the patient's card moves to the top, the alert joins the panel, and a pop-up offers Open patient. The clinician reviews the charts, acknowledges to take ownership and stop escalation, and resolves the alert with a required note. A link in an email or text opens the same patient after sign-in."
+      ]
+    },
+    {
+      "heading": "Design Decisions",
+      "paras": [
+        "*Meaning never depends on color alone.* Each severity has a color, a glyph, and a word, and abnormal points change both color and shape, following WCAG 2.1 guidance on the use of color (World Wide Web Consortium, 2018). Text contrast is at least 4.6:1, and red is reserved for critical alerts.",
+        "*Charts and alerts share one source of limits.* Zone bands and threshold lines are the thresholds the alert engine applies to that patient, so a chart never shows a flagged reading as normal.",
+        "*Updates are pushed and drawn incrementally.* WebSocket events arrive in 250 ms batches; new readings are appended in the browser without a server round trip, gauges get partial updates, and a 15-second poll covers a dropped connection. The 7-day view keeps each interval's high, low, and abnormal readings while thinning normal ones.",
+        "*Alert fatigue and privacy carry into the screen.* Repeats appear as occurrence counts, each alert shows at most one pop-up, and pop-ups close once the alert is acknowledged. The dashboard server holds the access and refresh tokens; the browser receives only a session cookie and a one-time WebSocket ticket."
+      ]
+    }
+  ],
+  "references": [
+    "World Wide Web Consortium. (2018). *Web content accessibility guidelines (WCAG) 2.1*. https://www.w3.org/TR/WCAG21/"
+  ]
+}
