@@ -21,19 +21,19 @@ interfaces (requirement NFR-18):
 | `app/repositories/alerts.py` | All alert-table SQL; nothing else touches those tables directly |
 
 ```mermaid
-flowchart LR
-    dev[Device app or gateway] -->|POST vitals / batch| ing[Ingestion routes]
-    ing -->|commit readings| db[(Database)]
-    ing -->|after commit| svc[alerts.service]
+flowchart TB
+    dev[Device app or gateway] -->|POST vitals or batch| ing[Ingestion routes]
+    ing -->|1. commit readings| db[(Database)]
+    ing -->|2. after commit| svc[alerts.service]
     svc -->|vital events| bus[Realtime broker]
     svc --> eng[Alert engine]
-    eng -->|alerts, events, queued notifications| db
+    eng -->|alerts, history, queued notifications| db
     eng -->|alert events after commit| bus
-    wk[Background workers] -->|dispatch due notifications| ch{Channels}
-    wk -->|escalation and pattern jobs| eng
+    wk[Background workers] -->|escalation and pattern jobs| eng
+    wk -->|dispatch due notifications| ch{Channels}
     ch -->|dashboard| bus
-    ch -->|email| smtp[SMTP server or outbox/email.jsonl]
-    ch -->|sms| gw[SMS gateway webhook or outbox/sms.jsonl]
+    ch -->|email| smtp[SMTP server or outbox]
+    ch -->|sms| gw[SMS gateway webhook or outbox]
     bus -->|WebSocket /api/v1/stream| dash[Dashboard]
     dash -->|REST: worklist, alerts, acknowledge| api[Alert API]
     api --> db

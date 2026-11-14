@@ -9,14 +9,17 @@ page. All data is synthetic.
 The dashboard is a client of the Phase 4 alert-system API in `../phase4-alert-system/`; it never opens the
 database. Start that API first.
 
-## Deliverable map
+## Deliverables
 
-| Deliverable | Location |
-|---|---|
-| Dashboard implementation | `dashboard/` (layout, callbacks, figures, components, API client, browser assets) |
-| User interface design document (layout, components, interaction flow, design decisions) | `docs/HealthTrack_Dashboard_UI_Design.pdf` |
-| User guide | `docs/USER_GUIDE.md` |
-| Testing documentation (load time, real-time updates, data accuracy) | `docs/TESTING.md` (method) and `reports/dashboard_test_results.md` (results from `scripts/run_reports.sh`) |
+Each written deliverable is a PDF in `docs/`; the Markdown and generated report files they were built from stay
+next to them so they can be read on GitHub and regenerated.
+
+| Deliverable | PDF | Source in this folder |
+|---|---|---|
+| Dashboard implementation | (code) | `dashboard/` (layout, callbacks, figures, components, API client, browser assets), tests in `tests/` |
+| User interface design document (layout, components, interaction flow, design decisions) | [`docs/HealthTrack_Dashboard_UI_Design.pdf`](docs/HealthTrack_Dashboard_UI_Design.pdf) | `docs/build/ui_design.json` |
+| User guide | [`docs/HealthTrack_Dashboard_User_Guide.pdf`](docs/HealthTrack_Dashboard_User_Guide.pdf) | `docs/USER_GUIDE.md` |
+| Testing documentation (load time, real-time updates, data accuracy) | [`docs/HealthTrack_Dashboard_Testing_Documentation.pdf`](docs/HealthTrack_Dashboard_Testing_Documentation.pdf) | `docs/TESTING.md` (method) and `reports/dashboard_test_results.md` (results from `scripts/run_reports.sh`) |
 
 ## Setup (macOS, Linux, or Windows)
 
